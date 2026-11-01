@@ -1,0 +1,36 @@
+#include <reg51.h>
+ 
+/* Common-cathode codes : bit0=a bit1=b bit2=c bit3=d bit4=e bit5=f bit6=g bit7=dp */
+code unsigned char seg[16] = {
+    0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07,    /* 0 1 2 3 4 5 6 7 */
+    0x7F, 0x6F, 0x77, 0x7C, 0x39, 0x5E, 0x79, 0x71     /* 8 9 A b C d E F */
+};
+ 
+sbit DP1 = P3^2;      /* DP1_Select */
+sbit DP2 = P3^3;      /* DP2_Select */
+sbit DP3 = P3^4;      /* DP3_Select */
+sbit DP4 = P3^5;      /* DP4_Select */
+#define SEL_ON   1    /* digit-select level (invert both if your board enables a digit with 0) */
+#define SEL_OFF  0
+ 
+void delay_ms(unsigned int ms)          /* approx. 1 ms per count @ 11.0592 MHz, 12-clock mode */
+{
+    unsigned int i, j;
+    for (i = 0; i < ms; i++)
+        for (j = 0; j < 123; j++);
+}
+ 
+void main(void)
+{
+    unsigned char i;
+    DP1 = SEL_ON;  DP2 = SEL_OFF;  DP3 = SEL_OFF;  DP4 = SEL_OFF;
+    while (1)
+    {
+        for (i = 0; i <= 9; i++)
+        {
+            P2 = seg[i];
+            delay_ms(500);
+        }
+    }
+}
+ 
