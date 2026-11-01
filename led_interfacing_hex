@@ -1,0 +1,29 @@
+#include <reg51.h>
+ 
+#define LED_PORT    P2
+#define LED_ON_LEVEL 1      /* Manual: LD1-LD8 (SW25 : 1-2) ON = 1 | LD9-LD16 (SW25 : 2-3) ON = 0 */
+#if LED_ON_LEVEL
+  #define LEDOUT(x)  (x)
+#else
+  #define LEDOUT(x)  (~(x))
+#endif
+ 
+void delay_ms(unsigned int ms)          /* approx. 1 ms per count @ 11.0592 MHz, 12-clock mode */
+{
+    unsigned int i, j;
+    for (i = 0; i < ms; i++)
+        for (j = 0; j < 123; j++);
+}
+ 
+void main(void)
+{
+    unsigned int n;
+    while (1)
+    {
+        for (n = 0x00; n <= 0xFF; n++)
+        {
+            LED_PORT = LEDOUT((unsigned char)n);
+            delay_ms(200);
+        }
+    }
+}
